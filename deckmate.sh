@@ -96,14 +96,14 @@ Proxy_Setting() {
 
 ## 非Steam游戏转译支持
 Proton_Setting() {
-    if [ -d "~/.steam" ] ; then
-        if [ ! -d "~/.steam/root/compatibilitytools.d" ] ; then
-            mkdir "~/.steam/root/compatibilitytools.d"
-        else rm -rf ~/.steam/root/compatibilitytools.d/* 
+    if [ -d "$HOME" ] ; then
+        if [ ! -d "$HOME/.steam/root/compatibilitytools.d" ] ; then
+            mkdir "$HOME/.steam/root/compatibilitytools.d"
+        else rm -rf $HOME/.steam/root/compatibilitytools.d/* 
         fi
         echo "开始下载Proton-GE最新版本…"
         loop_exe "curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)"
-        tar -xf GE-Proton*.tar.gz -C ~/.steam/root/compatibilitytools.d/
+        tar -xf GE-Proton*.tar.gz -C $HOME/.steam/root/compatibilitytools.d/
         rm ./GE-Proton*.tar.gz
         if ( ! flatpak list | grep -i protonup &>/dev/null ) ; then # 安装Proton图形管理界面
             Ini_PkgMan
