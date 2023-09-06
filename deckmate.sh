@@ -20,8 +20,8 @@ Ini_PkgMan() {
         echo "开始同步在线软体仓库…" 
         sudo pacman-key --init &>/dev/null && sudo pacman-key --populate &>/dev/null
         loop_exe "sudo pacman -Sy"
-        if ( ! pacman -Qs paru &>/dev/null || ! pacman -Qs base-devel &>/dev/null ) ; then # 安装AUR助手
-            loop_exe "sudo pacman -S paru base-devel --noconfirm"
+        if ( ! pacman -Qs paru &>/dev/null ) ; then # 安装AUR助手
+            loop_exe "sudo pacman -S paru --noconfirm"
         fi
         sudo steamos-readonly enable # 重启系统写保护
         if ( ! flatpak remotes --show-details | grep -i .cn &>/dev/null ) ; then # Flat商店镜像加速
@@ -64,14 +64,15 @@ Basic_Sinicization() {
  
 ## 科学上网
 Proxy_Setting() {
-    if ( ! pacman -Qqm | grep -i v2ray &>/dev/null ) ; then 
-        Ini_PkgMan
-        sudo steamos-readonly disable
-        loop_exe "sudo pacman -S ufw --noconfirm" #安装防火墙(透明代理依赖)并适配KDE图形界面
-        loop_exe "paru -S v2raya-bin" #安装v2ray及WebUI
-        sudo systemctl disable v2ray --now && sudo systemctl enable v2raya && sudo systemctl restart v2raya #启动科学上网
-        echo -e "\033[32m 翻墙核心已就绪 \033[0m"
-        sudo steamos-readonly enable
+    if ( ! systemctl --user status container-v2raya.service &>/dev/null ) ; then 
+        if ( ! podman --version &>/dev/null ) ; then # rootless模式安装podman
+            loop_exe "curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/extras/install-podman | sh -s -- --prefix ~/.local"
+        fi
+    mkdir -p ~/.config/v2raya
+    podman create -it --name v2raya --restart=unless-stopped --label io.containers.autoupdate=registry --cgroup-parent=v2raya.slice --security-opt no-new-privileges --cap-drop all --network host --volume ~/.config/v2raya:/etc/v2raya:z docker.io/mzz2017/v2raya:latest
+    #启动科学上网
+    podman generate systemd --name v2raya > ~/.config/systemd/user/container-v2raya.service && systemctl --user daemon-reload && systemctl --user enable --now container-v2raya.service
+    echo -e "\033[32m 翻墙核心已就绪 \033[0m"
         if ( ! flatpak list | grep -i chrom &>/dev/null ); then # 浏览器检测
             while true ; do
                 read -r -p "是否安装Chrome访问管理界面? [Y/n]" input0
@@ -90,7 +91,7 @@ Proxy_Setting() {
             echo -e "\033[33m 注意: 你仍需手动配置节点 \033[0m"
             xdg-open http://127.0.0.1:2017 &>/dev/null
         fi
-    else echo -e "\033[33m 您可能已安装过v2ray. 跳过… \033[0m"
+    else echo -e "\033[33m 您可能已安装过v2rayA. 跳过… \033[0m"
     fi
 }
 
