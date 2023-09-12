@@ -2,12 +2,12 @@
 > SteamDeck初始化定制脚本  
 
 ## 功能 | funtion
-脚本旨在提供中国大陆SteamDeck用户网络优化方案, 并为他们当中的Linux爱好者自动配置最基本的桌面模式语言环境
+脚本旨在提供中国大陆SteamDeck用户网络优化方案, 并为他们当中的Linux爱好者自动配置最基本的桌面模式语言环境。由于SteamOS的更新可能造成部分自定义内容所在的堆叠层被[覆写导致失效](https://www.bilibili.com/read/cv19654191/), 故脚本倾向于使用Flatpak、rootless容器或调用系统内置应用以确保修改尽可能地持久化.  
 * 初始化包管理器和AUR助手
 * 修补KDE中文显示 
 * 应用商店换源 
-* 安装fcitx5中文输入法
-* 安装v2ray-core并通过Chrome或其他浏览器访问其Web-UI
+* 为桌面模式调用内置iBus中文输入法
+* 安装v2ray并通过Chrome或其他浏览器访问其Web-UI(掌机模式/桌面模式通用)
 
 ## 使用方法 | useage  
 1. 在`deckmate.sh`文件路径下打开Konsole或其他命令行  
